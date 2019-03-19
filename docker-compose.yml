@@ -1,25 +1,35 @@
 version: "2"
 
 services:
+  db:
+    image: postgres:9.6
+    ports:
+      - 54321:5432
+    volumes:
+      - ./local/data:/var/lib/postgres
+    environment:
+      POSTGRES_DB: app-local
+      POSTGRES_USER: app
+      POSTGRES_PASSWORD: app-pass
   api:
     image: golang:1.11.5
     volumes:
-      - .:/Users/maxheckel/Sites/vinyl-analytics/server
-    working_dir: /Users/maxheckel/Sites/vinyl-analytics/server
+      - .:/Users/maxheckel/Sites/app/server
+    working_dir: /Users/maxheckel/Sites/app/server
     command: |-
       bash -c '
       set -ex; go get -u github.com/codegangsta/gin; gin \
               -i \
-              -d server/cmd/vinyl-analytics \
+              -d server/cmd/app \
               --appPort 8081 \
-              run server/cmd/vinyl-analytics/main.go'
+              run server/cmd/app/main.go'
     ports:
       - 8081:8081
   ui:
     image: node:10-alpine
     volumes:
-      - .:/Users/maxheckel/Sites/vinyl-analytics/ui
-    working_dir: /Users/maxheckel/Sites/vinyl-analytics/ui
+      - .:/Users/maxheckel/Sites/app/ui
+    working_dir: /Users/maxheckel/Sites/app/ui
     command: sh -c "cd ui && npm install && npm run serve"
     ports:
       - 8080:8080
