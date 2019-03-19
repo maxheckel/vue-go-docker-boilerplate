@@ -1,0 +1,25 @@
+version: "2"
+
+services:
+  api:
+    image: golang:1.11.5
+    volumes:
+      - .:/Users/maxheckel/Sites/vinyl-analytics/server
+    working_dir: /Users/maxheckel/Sites/vinyl-analytics/server
+    command: |-
+      bash -c '
+      set -ex; go get -u github.com/codegangsta/gin; gin \
+              -i \
+              -d server/cmd/vinyl-analytics \
+              --appPort 8081 \
+              run server/cmd/vinyl-analytics/main.go'
+    ports:
+      - 8081:8081
+  ui:
+    image: node:10-alpine
+    volumes:
+      - .:/Users/maxheckel/Sites/vinyl-analytics/ui
+    working_dir: /Users/maxheckel/Sites/vinyl-analytics/ui
+    command: sh -c "cd ui && npm install && npm run serve"
+    ports:
+      - 8080:8080
